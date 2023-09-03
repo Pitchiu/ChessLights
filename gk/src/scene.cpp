@@ -8,7 +8,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-Scene* Scene::mScene = nullptr;;
+Scene* Scene::mScene = nullptr;
+
 
 void framebufferSizeCallbackHandle(GLFWwindow* window, int width, int height)
 {
@@ -72,6 +73,7 @@ Scene* Scene::getInstance()
 
 void Scene::run()
 {
+    //Shader::addCommonFile("res/shaders/common.glsl");
     // build and compile shaders
     Shader boardShader("res\\shaders\\basic.vs", "res\\shaders\\basic.fs");
     Shader whiteKingShader("res\\shaders\\king.vs", "res\\shaders\\king.fs");

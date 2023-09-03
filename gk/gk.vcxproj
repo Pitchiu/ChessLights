@@ -141,6 +141,7 @@
   <ItemGroup>
     <None Include="res\shaders\basic.fs" />
     <None Include="res\shaders\basic.vs" />
+    <None Include="res\shaders\common.glsl" />
     <None Include="res\shaders\king.fs" />
     <None Include="res\shaders\king.vs" />
   </ItemGroup>

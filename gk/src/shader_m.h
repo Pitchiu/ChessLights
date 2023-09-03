@@ -8,10 +8,12 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <vector>
 
 class Shader
 {
 public:
+    static std::vector<std::string> commonCode;
     unsigned int ID;
     // constructor generates the shader on the fly
     // ------------------------------------------------------------------------
@@ -30,10 +32,18 @@ public:
             // open files
             vShaderFile.open(vertexPath);
             fShaderFile.open(fragmentPath);
+
             std::stringstream vShaderStream, fShaderStream;
             // read file's buffer contents into streams
             vShaderStream << vShaderFile.rdbuf();
             fShaderStream << fShaderFile.rdbuf();
+
+            for (auto code : commonCode)
+            {
+                vShaderStream << code;
+                fShaderStream << code;
+            }
+
             // close file handlers
             vShaderFile.close();
             fShaderFile.close();
@@ -135,6 +145,26 @@ public:
         glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
     }
 
+    static void addCommonFile(const char* path)
+    {
+        std::string code;
+        std::ifstream file;
+        file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        try
+        {
+            file.open(path);
+            std::stringstream stream;
+            stream << file.rdbuf();
+            file.close();
+            code = stream.str();
+            commonCode.push_back(code);
+        }
+        catch (std::ifstream::failure& e)
+        {
+            std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << e.what() << std::endl;
+        }
+    }
+
 private:
     // utility function for checking shader compilation/linking errors.
     // ------------------------------------------------------------------------
@@ -162,4 +192,8 @@ private:
         }
     }
 };
+
+std::vector<std::string> Shader::commonCode = std::vector<std::string>();
+
+
 #endif

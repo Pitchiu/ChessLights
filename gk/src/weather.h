@@ -45,6 +45,13 @@ public:
 		return c1 * (1 - mixFactor) + c2 * mixFactor;
 	}
 
+	//float getFogDensity()
+	//{
+	//	if (time == DayTime.Night && mix >= 0.5) return (mix - 0.5f) / 5;
+	//	else if (time == DayTime.Morning && mix <= 0.5) return (0.5f - mix) / 5;
+	//	return 0.0f;
+	//}
+
 
 private:
 	float mixFactor = 0.0f;

@@ -15,6 +15,7 @@
     <None Include="res\shaders\basic.vs" />
     <None Include="res\shaders\king.vs" />
     <None Include="res\shaders\king.fs" />
+    <None Include="res\shaders\common.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="legacy\IndexBuffer.cpp" />
