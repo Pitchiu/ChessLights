@@ -3,6 +3,7 @@
 #include "shader_m.h"
 #include "model.h"
 #include "camera.h"
+#include "weather.h"
 
 
 struct DirLight
@@ -40,19 +41,19 @@ public:
 
 	IluminatedObject(Shader& shader, Model& model);
 	void configureIlumination(const LightProperty&);
-    virtual void draw(const LightProperty& prop, const Camera& camera);
+    virtual void draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController);
 };
 
 class WhiteKing : IluminatedObject
 {
 public:
     WhiteKing(Shader& shader, Model& model);
-    void draw(const LightProperty& prop, const Camera& camera) override;
+    void draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController) override;
 };
 
 class Board : IluminatedObject
 {
 public:
     Board(Shader& shader, Model& model);
-    void draw(const LightProperty& prop, const Camera& camera) override;
+    void draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController) override;
 };

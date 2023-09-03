@@ -88,6 +88,8 @@ void Scene::run()
     WhiteKing whiteKing(whiteKingShader, whiteKingModel);
 
     LightProperty lightProperty;
+    ConditionsController conditionsController;
+
 
     while (!glfwWindowShouldClose(window))
     {
@@ -95,15 +97,15 @@ void Scene::run()
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        processInput(window);
+        processInput(window, conditionsController);
 
         conditionsController.updateTime();
         auto background = conditionsController.getBackgroundColor();
-        glClearColor(background.r, background.g, background.b, background.a);
+        glClearColor(background.r, background.g, background.b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        board.draw(lightProperty, camera);
-        whiteKing.draw(lightProperty, camera);
+        board.draw(lightProperty, camera, conditionsController);
+        whiteKing.draw(lightProperty, camera, conditionsController);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -149,13 +151,20 @@ void Scene::mouseCallback(GLFWwindow* window, double xposIn, double yposIn)
     camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
-void Scene::processInput(GLFWwindow* window)
+void Scene::processInput(GLFWwindow* window, ConditionsController &controller)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    //if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
-    //    x += 0.01f;
+    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+    {
+        if(!wasPressed)
+            controller.changeFog();
+        wasPressed = true;
+
+    }
+    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_RELEASE)
+        wasPressed = false;
     //if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
     //    x -= 0.01f;
     //if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)

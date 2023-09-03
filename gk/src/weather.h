@@ -5,8 +5,27 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-class WeatherConditionsController
+class ConditionsController
 {
+private:
+	enum TimeOfDay
+	{
+		Morning,
+		Afternoon,
+		Evening,
+		Night
+	};
+
+	float mixFactor = 0.0f;
+	TimeOfDay timeOfDay = Morning;
+	std::chrono::steady_clock::time_point start_time;
+
+	int elapsedMiliSeconds(std::chrono::steady_clock::time_point& start) {
+		std::chrono::steady_clock::time_point current_time = std::chrono::steady_clock::now();
+		std::chrono::milliseconds elapsed_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - start);
+		return elapsed_milliseconds.count();
+	}
+
 	const glm::vec4 backgroundColors[4] = {
 		{0.94f, 0.97f, 0.96f, 1.0f},
 		{0.52f, 0.81f, 0.92f, 1.0f},
@@ -17,49 +36,61 @@ class WeatherConditionsController
 	const int fullCycleSeconds = 40000;
 	const int partialCycleSeconds = 10000;
 
-public:
-	enum TimeOfDay
-	{
-		Morning,
-		Afternoon,
-		Evening,
-		Night
-	};
+	const int fullFogChange = 4000;
+	const float fogMax = 0.1f;
+	std::chrono::steady_clock::time_point fogChangeStart;
 
-	WeatherConditionsController()
+	float currentFogValue = 0.0f;
+	float startChanging = 0.0f;
+	bool fogEnabled = false;
+
+	void updateFog()
+	{
+		if (fogEnabled && currentFogValue < fogMax)
+		{
+			currentFogValue = startChanging + 
+				fogMax*((float)elapsedMiliSeconds(fogChangeStart) / (float)fullFogChange);
+			currentFogValue = std::min(currentFogValue, fogMax);
+		}
+		else if (!fogEnabled && currentFogValue > 0.0f)
+		{
+			currentFogValue = startChanging -
+				fogMax * ((float)elapsedMiliSeconds(fogChangeStart) / (float)fullFogChange);
+			currentFogValue = std::max(currentFogValue, 0.0f);
+		}
+	}
+
+public:
+
+	ConditionsController()
 	{
 		start_time = std::chrono::steady_clock::now();
 	}
 
 	void updateTime()
 	{
-		int secondsInCycle = (elapsedMiliSeconds() % fullCycleSeconds);
+		int secondsInCycle = (elapsedMiliSeconds(start_time) % fullCycleSeconds);
 		timeOfDay = (TimeOfDay)(secondsInCycle / partialCycleSeconds);
 		mixFactor = (float)(secondsInCycle - timeOfDay * partialCycleSeconds)/(float)partialCycleSeconds;
+		updateFog();
 	}
 
-	glm::vec4 getBackgroundColor()
+	glm::vec3 getBackgroundColor() const
 	{
 		glm::vec4 c1 = backgroundColors[timeOfDay];
 		glm::vec4 c2 = backgroundColors[(int)(timeOfDay + 1) % 4];
-		return c1 * (1 - mixFactor) + c2 * mixFactor;
+		return (c1 * (1 - mixFactor) + c2 * mixFactor);
 	}
 
-	//float getFogDensity()
-	//{
-	//	if (time == DayTime.Night && mix >= 0.5) return (mix - 0.5f) / 5;
-	//	else if (time == DayTime.Morning && mix <= 0.5) return (0.5f - mix) / 5;
-	//	return 0.0f;
-	//}
+	float getFogDensity() const
+	{
+		return currentFogValue;
+	}
 
-
-private:
-	float mixFactor = 0.0f;
-	TimeOfDay timeOfDay = Morning;
-	std::chrono::steady_clock::time_point start_time;
-	int elapsedMiliSeconds() {
-		std::chrono::steady_clock::time_point current_time = std::chrono::steady_clock::now();
-		std::chrono::milliseconds elapsed_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - start_time);
-		return elapsed_milliseconds.count();
+	void changeFog()
+	{
+		fogEnabled = !fogEnabled;
+		startChanging = currentFogValue;
+		fogChangeStart = std::chrono::steady_clock::now();
 	}
 };

@@ -20,12 +20,13 @@ private:
 
 	Camera camera;
 	GLFWwindow* window;
-	WeatherConditionsController conditionsController;
 
 	void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 	void framebufferSizeCallback(GLFWwindow* window, int width, int height);
-	void processInput(GLFWwindow* window);
+	void processInput(GLFWwindow* window, ConditionsController& controller);
 	void mouseCallback(GLFWwindow* window, double xposIn, double yposIn);
+
+	bool wasPressed = false;
 
 public:
 	
@@ -41,7 +42,6 @@ public:
 	float dayNightCycle = 0.0f;
 
 	void run();
-
 
 	friend void framebufferSizeCallbackHandle(GLFWwindow* window, int width, int height);
 	friend void mouseCallbackHandle(GLFWwindow* window, double xposIn, double yposIn);

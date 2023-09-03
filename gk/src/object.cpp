@@ -10,7 +10,8 @@ void IluminatedObject::configureIlumination(const LightProperty& prop)
     shader.setVec3("dirLight.ambient", 0.2f, 0.2f, 0.2f);
     shader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
     shader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
-    // point light 1
+    // TODO: set attributes in loop
+    // pointLight
     shader.setVec3("pointLights[0].position", -10.0f, -10.0f, 10.0f); //changed
     shader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
     shader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
@@ -31,13 +32,18 @@ void IluminatedObject::configureIlumination(const LightProperty& prop)
     shader.setFloat("spotLight[0].outerCutOff", glm::cos(glm::radians(15.0f)));
 }
 
-void IluminatedObject::draw(const LightProperty& prop, const Camera& camera)
+void IluminatedObject::draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController)
 {
     shader.use();
     configureIlumination(prop);
     shader.setMat4("projection", camera.GetProjectionMatrix());
     shader.setMat4("view", camera.GetViewMatrix());
     shader.setVec3("viewPos", camera.Position);
+
+    // fog
+    shader.setVec3("skyColor", conditionsController.getBackgroundColor());
+    shader.setFloat("fogDensity", conditionsController.getFogDensity());
+
     model.Draw(shader);
 }
 
@@ -45,7 +51,7 @@ WhiteKing::WhiteKing(Shader& shader, Model& model) : IluminatedObject(shader, mo
 {
 }
 
-void WhiteKing::draw(const LightProperty& prop, const Camera& camera)
+void WhiteKing::draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController)
 {
     shader.use();
     glm::mat4 model = glm::mat4(1.0f);
@@ -56,14 +62,14 @@ void WhiteKing::draw(const LightProperty& prop, const Camera& camera)
     shader.setVec3("material.specular", 0.54f, 0.54f, 0.54f);
     shader.setFloat("material.shininess", 36.0f);
 
-    IluminatedObject::draw(prop, camera);
+    IluminatedObject::draw(prop, camera, conditionsController);
 }
 
 Board::Board(Shader& shader, Model& model) : IluminatedObject(shader, model)
 {
 }
 
-void Board::draw(const LightProperty& prop, const Camera& camera)
+void Board::draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController)
 {
     shader.use();
     glm::mat4 model = glm::mat4(1.0f);
@@ -75,5 +81,5 @@ void Board::draw(const LightProperty& prop, const Camera& camera)
     shader.setVec3("material.specular", 0.0f, 0.0f, 0.0f);
     shader.setFloat("material.shininess", 10.0f);
 
-    IluminatedObject::draw(prop, camera);
+    IluminatedObject::draw(prop, camera, conditionsController);
 }
