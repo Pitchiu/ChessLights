@@ -1,14 +1,15 @@
 #include "scene.h"
 
 #include <iostream>
-#include "shader_m.h"
-#include "model.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+
 Scene* Scene::mScene = nullptr;
+std::vector<std::string> Shader::commonCode = std::vector<std::string>();
+
 
 
 void framebufferSizeCallbackHandle(GLFWwindow* window, int width, int height)
@@ -73,17 +74,20 @@ Scene* Scene::getInstance()
 
 void Scene::run()
 {
-    //Shader::addCommonFile("res/shaders/common.glsl");
+    Shader::addCommonFile("res\\shaders\\light.glsl");
     // build and compile shaders
-    Shader boardShader("res\\shaders\\basic.vs", "res\\shaders\\basic.fs");
+    Shader boardShader("res\\shaders\\board.vs", "res\\shaders\\board.fs");
     Shader whiteKingShader("res\\shaders\\king.vs", "res\\shaders\\king.fs");
 
     // load models
-    Model board("res/board/board.obj");
-    Model whiteKing("res/king/king.obj");
+    Model boardModel("res/board/board.obj");
+    Model whiteKingModel("res/king/king.obj");
 
-    // draw in wireframe
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //std::vector<IluminatedObject> objects;
+    Board board(boardShader, boardModel);
+    WhiteKing whiteKing(whiteKingShader, whiteKingModel);
+
+    LightProperty lightProperty;
 
     while (!glfwWindowShouldClose(window))
     {
@@ -98,43 +102,8 @@ void Scene::run()
         glClearColor(background.r, background.g, background.b, background.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Board
-        boardShader.use();
-
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        glm::mat4 view = camera.GetViewMatrix();
-        boardShader.setMat4("projection", projection);
-        boardShader.setMat4("view", view);
-
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));	// it's a bit too big for our scene, so scale it down
-        model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
-        boardShader.setMat4("model", model);
-        board.Draw(boardShader);
-
-        // King
-        whiteKingShader.use();
-        whiteKingShader.setMat4("projection", projection);
-        whiteKingShader.setMat4("view", view);
-
-        model = glm::mat4(1.0f);
-        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));	// it's a bit too big for our scene, so scale it down
-        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        //model = glm::translate(model, glm::vec3(x, y, z)); // translate it down so it's at the center of the scene
-        whiteKingShader.setMat4("model", model);
-
-        whiteKingShader.setVec3("material.specular", 0.54f, 0.54f, 0.54f);
-        whiteKingShader.setFloat("material.shininess", 36.0f);
-
-        whiteKingShader.setVec3("light.ambient", 0.3f, 0.3f, 0.3f);
-        whiteKingShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
-        whiteKingShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
-        whiteKingShader.setVec3("light.position", lightPos);
-
-        whiteKingShader.setVec3("viewPos", camera.Position);
-        whiteKing.Draw(whiteKingShader);
+        board.draw(lightProperty, camera);
+        whiteKing.draw(lightProperty, camera);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

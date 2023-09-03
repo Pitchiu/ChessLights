@@ -139,21 +139,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="res\shaders\basic.fs" />
-    <None Include="res\shaders\basic.vs" />
-    <None Include="res\shaders\common.glsl" />
+    <None Include="res\shaders\board.fs" />
+    <None Include="res\shaders\board.vs" />
     <None Include="res\shaders\king.fs" />
     <None Include="res\shaders\king.vs" />
+    <None Include="res\shaders\light.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\object.cpp" />
     <ClCompile Include="legacy\IndexBuffer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="legacy\Renderer.cpp" />
     <ClCompile Include="legacy\VertexArray.cpp" />
     <ClCompile Include="legacy\VertexBuffer.cpp" />
+    <ClCompile Include="src\model.cpp" />
     <ClCompile Include="src\scene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\object.h" />
     <ClInclude Include="legacy\IndexBuffer.h" />
     <ClInclude Include="src\camera.h" />
     <ClInclude Include="src\mesh.h" />

@@ -1,5 +1,4 @@
-#ifndef SHADER_H
-#define SHADER_H
+#pragma once
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
@@ -192,8 +191,3 @@ private:
         }
     }
 };
-
-std::vector<std::string> Shader::commonCode = std::vector<std::string>();
-
-
-#endif

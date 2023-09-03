@@ -11,11 +11,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\shaders\basic.fs" />
-    <None Include="res\shaders\basic.vs" />
+    <None Include="res\shaders\board.fs" />
+    <None Include="res\shaders\board.vs" />
     <None Include="res\shaders\king.vs" />
     <None Include="res\shaders\king.fs" />
-    <None Include="res\shaders\common.glsl" />
+    <None Include="res\shaders\light.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="legacy\IndexBuffer.cpp" />
@@ -24,6 +24,8 @@
     <ClCompile Include="legacy\VertexArray.cpp" />
     <ClCompile Include="legacy\VertexBuffer.cpp" />
     <ClCompile Include="src\scene.cpp" />
+    <ClCompile Include="src\object.cpp" />
+    <ClCompile Include="src\model.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="legacy\IndexBuffer.h">
@@ -63,6 +65,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\weather.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
