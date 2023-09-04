@@ -57,7 +57,7 @@ void WhiteKing::draw(const LightProperty& prop, const Camera& camera, const Cond
     glm::mat4 model = glm::mat4(1.0f);
 
     // third - move
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, -position));
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, -offset));
 
     // second - translate to 0.0, rotate, and translate back
     model = glm::translate(model, glm::vec3(1.0f, 0.0f, 8.0f));
@@ -85,20 +85,30 @@ void WhiteKing::move(float deltaTime)
     if (angle > 360.0f)
         angle -= 360.0f;
     if (direction == Forward)
-        position += velocity;
+        offset += velocity;
     else
-        position -= velocity;
+        offset -= velocity;
 
-    if (position > maxDeflection)
+    if (offset > maxDeflection)
     {
-        position = maxDeflection;
+        offset = maxDeflection;
         direction = Backward;
     }
-    else if (position < 0.0f)
+    else if (offset < 0.0f)
     {
-        position = 0.0f;
+        offset = 0.0f;
         direction = Forward;
     }
+}
+
+float WhiteKing::getPosition()
+{
+    return offset / maxDeflection;
+}
+
+float WhiteKing::getOffset()
+{
+    return offset;
 }
 
 Board::Board(Shader& shader, Model& model) : IluminatedObject(shader, model)

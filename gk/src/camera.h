@@ -43,6 +43,9 @@ public:
     float MouseSensitivity;
     float Zoom;
 
+    bool mouseFixed = true;
+    bool positionFixed = true;
+
     // constructor with vectors
     Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
     {
@@ -76,6 +79,8 @@ public:
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
     void ProcessKeyboard(Camera_Movement direction, float deltaTime)
     {
+        if (positionFixed) return;
+
         float velocity = MovementSpeed * deltaTime;
         if (direction == FORWARD)
             Position += Front * velocity;
@@ -90,6 +95,8 @@ public:
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
     void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true)
     {
+        if (mouseFixed) return;
+
         xoffset *= MouseSensitivity;
         yoffset *= MouseSensitivity;
 
@@ -117,6 +124,14 @@ public:
             Zoom = 1.0f;
         if (Zoom > 45.0f)
             Zoom = 45.0f;
+    }
+
+    void SetNewPosition(glm::vec3 position, float pitch, float yaw)
+    {
+        Position = position;
+        Pitch = pitch;
+        Yaw = yaw;
+        updateCameraVectors();
     }
 
 private:

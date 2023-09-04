@@ -31,7 +31,7 @@ void scrollCallbackHandle(GLFWwindow* window, double xoffset, double yoffset)
 }
 
 
-Scene::Scene() : camera(glm::vec3(0.0f, 0.0f, 0.0f))
+Scene::Scene()
 {
     // Scene setup
     glfwInit();
@@ -72,6 +72,29 @@ Scene* Scene::getInstance()
     return mScene;
 }
 
+//void calculatePitchYaw(const glm::vec3& cameraPos, const glm::vec3& objectPos, float& pitch, float& yaw) {
+//    // Calculate the direction vector from the camera to the object
+//    glm::vec3 direction = glm::normalize(objectPos - cameraPos);
+//
+//    // Calculate pitch (up/down rotation)
+//    pitch = glm::degrees(asin(direction.y));
+//
+//    // Calculate yaw (left/right rotation)
+//    yaw = glm::degrees(atan2(-direction.x, -direction.z));
+//}
+
+void calculatePitchYaw(const glm::vec3& cameraPos, const glm::vec3& objectPos, const glm::vec3& up, float& pitch, float& yaw) {
+    glm::vec3 direction = glm::normalize(objectPos - cameraPos);
+
+    // Calculate yaw (left/right rotation)
+    yaw = glm::degrees(atan2(direction.x, direction.z));
+
+    // Calculate pitch (up/down rotation)
+    glm::vec3 right = glm::normalize(glm::cross(up, direction));
+    pitch = glm::degrees(atan2(-direction.y, glm::length(right)));
+}
+
+
 void Scene::run()
 {
     Shader::addCommonFile("res\\shaders\\light.glsl");
@@ -93,6 +116,7 @@ void Scene::run()
     LightProperty lightProperty;
     ConditionsController conditionsController;
 
+    camera.SetNewPosition(staticCameraPos, staticCameraPitch, staticCameraYaw);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -104,15 +128,31 @@ void Scene::run()
         std::cout << camera.Position.x <<
             " " << camera.Position.y << 
             " "<<camera.Position.z << endl;
+
+        std::cout << "Pitch: " << camera.Pitch << endl;
+        std::cout << "Yaw: " << camera.Yaw<< endl;
         conditionsController.updateTime();
         auto background = conditionsController.getBackgroundColor();
         glClearColor(background.r, background.g, background.b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        if (cameraMode == Tracking)
+        {
+            camera.SetNewPosition(trackingCameraPos,
+                trackingCameraBasePitch + whiteKing.getPosition() * trackingCameraExtraPitch,
+                trackingCameraBaseYaw + whiteKing.getPosition() * trackingCameraExtraYaw);
+        }
+
+        if (cameraMode == POV)
+        {
+            camera.SetNewPosition(POVCameraPos - glm::vec3(0.0f, 0.0f, whiteKing.getOffset()), camera.Pitch, camera.Yaw);
+        }
+
         board.draw(lightProperty, camera, conditionsController);
         whiteKing.draw(lightProperty, camera, conditionsController);
         whiteKing.move(deltaTime);
         knight.draw(lightProperty, camera, conditionsController);
+
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -158,22 +198,50 @@ void Scene::mouseCallback(GLFWwindow* window, double xposIn, double yposIn)
     camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
+void Scene::changeCamera()
+{
+    if (cameraMode == Static) cameraMode = POV;
+    else if (cameraMode == POV) cameraMode = Tracking;
+    else if (cameraMode == Tracking) cameraMode = Free;
+    else cameraMode = Static;
+
+    if (cameraMode == Free)
+        camera.positionFixed = false;
+    else
+        camera.positionFixed = true;
+
+    if (cameraMode == Free || cameraMode == POV)
+        camera.mouseFixed = false;
+    else
+        camera.mouseFixed = true;
+
+    if (cameraMode == Static)
+    {
+        camera.SetNewPosition(staticCameraPos, staticCameraPitch, staticCameraYaw);
+    }
+}
+
 void Scene::processInput(GLFWwindow* window, ConditionsController &controller)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && !wasPressed)
     {
-        if(!wasPressed)
-            controller.changeFog();
+        controller.changeFog();
         wasPressed = true;
-
     }
-    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_RELEASE)
+
+    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS && !wasPressed)
+    {
+        changeCamera();
+        wasPressed = true;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_RELEASE &&
+        glfwGetKey(window, GLFW_KEY_2) == GLFW_RELEASE)
         wasPressed = false;
-    //if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
-    //    x -= 0.01f;
+
     //if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
     //    y += 0.01f;
     //if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
