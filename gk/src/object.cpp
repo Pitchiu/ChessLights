@@ -55,14 +55,50 @@ void WhiteKing::draw(const LightProperty& prop, const Camera& camera, const Cond
 {
     shader.use();
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+
+    // third - move
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, -position));
+
+    // second - translate to 0.0, rotate, and translate back
+    model = glm::translate(model, glm::vec3(1.0f, 0.0f, 8.0f));
+    model = glm::rotate(model, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+    model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -8.0f));
+
+    // first - set initial position
     model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+
     shader.setMat4("model", model);
 
     shader.setVec3("material.specular", 0.54f, 0.54f, 0.54f);
     shader.setFloat("material.shininess", 36.0f);
 
     IluminatedObject::draw(prop, camera, conditionsController);
+}
+
+void WhiteKing::move(float deltaTime)
+{
+    if (stop) return;
+
+    float velocity = speed * deltaTime;
+    angle += velocity*angleSpeed;
+    if (angle > 360.0f)
+        angle -= 360.0f;
+    if (direction == Forward)
+        position += velocity;
+    else
+        position -= velocity;
+
+    if (position > maxDeflection)
+    {
+        position = maxDeflection;
+        direction = Backward;
+    }
+    else if (position < 0.0f)
+    {
+        position = 0.0f;
+        direction = Forward;
+    }
 }
 
 Board::Board(Shader& shader, Model& model) : IluminatedObject(shader, model)
@@ -76,10 +112,29 @@ void Board::draw(const LightProperty& prop, const Camera& camera, const Conditio
     model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
     model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f));
     model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
     shader.setMat4("model", model);
 
     shader.setVec3("material.specular", 0.0f, 0.0f, 0.0f);
     shader.setFloat("material.shininess", 10.0f);
+
+    IluminatedObject::draw(prop, camera, conditionsController);
+}
+
+Knight::Knight(Shader& shader, Model& model) : IluminatedObject(shader, model)
+{
+}
+
+void Knight::draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController)
+{
+    shader.use();
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+    model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    shader.setMat4("model", model);
+
+    shader.setVec3("material.specular", 0.54f, 0.54f, 0.54f);
+    shader.setFloat("material.shininess", 36.0f);
 
     IluminatedObject::draw(prop, camera, conditionsController);
 }

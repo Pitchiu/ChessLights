@@ -77,15 +77,18 @@ void Scene::run()
     Shader::addCommonFile("res\\shaders\\light.glsl");
     // build and compile shaders
     Shader boardShader("res\\shaders\\board.vs", "res\\shaders\\board.fs");
-    Shader whiteKingShader("res\\shaders\\king.vs", "res\\shaders\\king.fs");
+    //Shader whiteKingShader("res\\shaders\\king.vs", "res\\shaders\\king.fs");
 
     // load models
     Model boardModel("res/board/board.obj");
     Model whiteKingModel("res/king/king.obj");
+    Model knightModel("res/knight/knight.obj");
+
 
     //std::vector<IluminatedObject> objects;
     Board board(boardShader, boardModel);
-    WhiteKing whiteKing(whiteKingShader, whiteKingModel);
+    WhiteKing whiteKing(boardShader, whiteKingModel);
+    Knight knight(boardShader, knightModel);
 
     LightProperty lightProperty;
     ConditionsController conditionsController;
@@ -98,7 +101,9 @@ void Scene::run()
         lastFrame = currentFrame;
 
         processInput(window, conditionsController);
-
+        std::cout << camera.Position.x <<
+            " " << camera.Position.y << 
+            " "<<camera.Position.z << endl;
         conditionsController.updateTime();
         auto background = conditionsController.getBackgroundColor();
         glClearColor(background.r, background.g, background.b, 1.0f);
@@ -106,6 +111,8 @@ void Scene::run()
 
         board.draw(lightProperty, camera, conditionsController);
         whiteKing.draw(lightProperty, camera, conditionsController);
+        whiteKing.move(deltaTime);
+        knight.draw(lightProperty, camera, conditionsController);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

@@ -46,14 +46,36 @@ public:
 
 class WhiteKing : IluminatedObject
 {
+private:
+    enum Direction
+    {
+        Forward,
+        Backward,
+    };
+    Direction direction = Forward;
+    float const speed = 2.0f;
+    float const maxDeflection = 10.0f;
+    float const angleSpeed = 15.0f;
+    float position = 0.0f;
+    float angle = 0.0f;
+
 public:
     WhiteKing(Shader& shader, Model& model);
     void draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController) override;
+    void move(float deltaTime);
+    bool stop = false;
 };
 
 class Board : IluminatedObject
 {
 public:
     Board(Shader& shader, Model& model);
+    void draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController) override;
+};
+
+class Knight : IluminatedObject
+{
+public:
+    Knight(Shader& shader, Model& model);
     void draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController) override;
 };

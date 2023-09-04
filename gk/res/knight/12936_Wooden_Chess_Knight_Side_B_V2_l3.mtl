@@ -1,7 +1,7 @@
 # 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
-# File Created: 12.01.2012 14:29:24
+# File Created: 12.01.2012 15:36:22
 
-newmtl 12930_WoodenChessNightSideA
+newmtl 12936_WoodenChessNightSideB
 	Ns 36.0000
 	Ni 1.5000
 	d 1.0000
@@ -12,5 +12,5 @@ newmtl 12930_WoodenChessNightSideA
 	Kd 1.0000 1.0000 1.0000
 	Ks 0.5400 0.5400 0.5400
 	Ke 0.0000 0.0000 0.0000
-	map_Ka 12930_WoodenChessNightSideA_diffuse.jpg
-	map_Kd 12930_WoodenChessNightSideA_diffuse.jpg
+	map_Ka 12936_WoodenChessNightSideB_diffuse.jpg
+	map_Kd 12936_WoodenChessNightSideB_diffuse.jpg
