@@ -238,18 +238,16 @@ void Scene::processInput(GLFWwindow* window, ConditionsController &controller)
         wasPressed = true;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_RELEASE &&
-        glfwGetKey(window, GLFW_KEY_2) == GLFW_RELEASE)
-        wasPressed = false;
+    if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS && !wasPressed)
+    {
+        controller.objectShaking = !controller.objectShaking;
+        wasPressed = true;
+    }
 
-    //if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
-    //    y += 0.01f;
-    //if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
-    //    y -= 0.01f;
-    //if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
-    //    z += 0.01f;
-    //if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)
-    //    z -= 0.01f;
+    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_RELEASE &&
+        glfwGetKey(window, GLFW_KEY_2) == GLFW_RELEASE &&
+        glfwGetKey(window, GLFW_KEY_3) == GLFW_RELEASE)
+        wasPressed = false;
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(FORWARD, deltaTime);

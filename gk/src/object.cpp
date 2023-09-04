@@ -1,4 +1,5 @@
 #include "object.h"
+#include "random"
 
 IluminatedObject::IluminatedObject(Shader& shader, Model& model) : shader(shader), model(model)
 {
@@ -51,6 +52,14 @@ WhiteKing::WhiteKing(Shader& shader, Model& model) : IluminatedObject(shader, mo
 {
 }
 
+
+float getRandomFloat() {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+    return distribution(gen);
+}
+
 void WhiteKing::draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController)
 {
     shader.use();
@@ -62,6 +71,12 @@ void WhiteKing::draw(const LightProperty& prop, const Camera& camera, const Cond
     // second - translate to 0.0, rotate, and translate back
     model = glm::translate(model, glm::vec3(1.0f, 0.0f, 8.0f));
     model = glm::rotate(model, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+    if (conditionsController.objectShaking)
+    {
+        model = glm::rotate(model, glm::radians(getRandomFloat()), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(getRandomFloat()), glm::vec3(0.0f, 0.0f, 1.0f));
+    }
+
     model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -8.0f));
 
     // first - set initial position

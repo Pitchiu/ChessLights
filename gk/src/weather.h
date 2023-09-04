@@ -93,4 +93,6 @@ public:
 		startChanging = currentFogValue;
 		fogChangeStart = std::chrono::steady_clock::now();
 	}
+
+	bool objectShaking = false;
 };
