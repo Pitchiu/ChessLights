@@ -147,4 +147,5 @@ public:
 	}
 
 	bool objectShaking = false;
+	bool lightsOn = false;
 };

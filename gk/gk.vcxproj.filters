@@ -11,11 +11,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\shaders\board.fs" />
-    <None Include="res\shaders\board.vs" />
-    <None Include="res\shaders\king.vs" />
-    <None Include="res\shaders\king.fs" />
+    <None Include="res\shaders\object.fs" />
+    <None Include="res\shaders\object.vs" />
     <None Include="res\shaders\light.glsl" />
+    <None Include="res\shaders\sphere.fs" />
+    <None Include="res\shaders\sphere.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="legacy\IndexBuffer.cpp" />

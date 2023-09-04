@@ -23,6 +23,7 @@ const float trackingCameraExtraYaw = 30.0f;
 
 const glm::vec3 POVCameraPos = glm::vec3(0.75f, 6.01f, 7.87f);
 
+const glm::vec3 spherePosition1 = glm::vec3(7.0f, 3.0f, 7.0f);
 
 
 class Scene

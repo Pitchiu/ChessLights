@@ -89,3 +89,10 @@ public:
     Knight(Shader& shader, Model& model);
     void draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController) override;
 };
+
+class Sphere : IluminatedObject
+{
+public:
+    Sphere(Shader& shader, Model& model);
+    void draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController) override;
+};

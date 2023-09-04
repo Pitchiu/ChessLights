@@ -89,6 +89,16 @@ void Scene::configureLightProperty(LightProperty& prop)
     prop.dirLight.ambient = { 0.5f, 0.5f, 0.5f };
     prop.dirLight.diffuse = { 0.4f, 0.4f, 0.4f };
     prop.dirLight.specular = { 0.5f, 0.5f, 0.5f };
+
+    PointLight p;
+    p.position = spherePosition1;
+    p.ambient = { 0.1f, 0.1f, 0.1f };
+    p.diffuse = { 1.0f, 1.0f, 0.9f };
+    p.specular = { 0.1f, 0.1f, 0.1f };
+    p.constant = 1.0f;
+    p.linear = 0.09f;
+    p.quadratic = 0.032f;
+    prop.pointLights.push_back(p);
 }
 
 
@@ -96,19 +106,22 @@ void Scene::run()
 {
     Shader::addCommonFile("res\\shaders\\light.glsl");
     // build and compile shaders
-    Shader boardShader("res\\shaders\\board.vs", "res\\shaders\\board.fs");
-    //Shader whiteKingShader("res\\shaders\\king.vs", "res\\shaders\\king.fs");
+    Shader objectShader("res\\shaders\\object.vs", "res\\shaders\\object.fs");
+    Shader sphereShader("res\\shaders\\sphere.vs", "res\\shaders\\sphere.fs");
 
     // load models
     Model boardModel("res/board/board.obj");
     Model whiteKingModel("res/king/king.obj");
     Model knightModel("res/knight/knight.obj");
+    Model sphereModel("res/sphere/sphere.obj");
 
 
-    //std::vector<IluminatedObject> objects;
-    Board board(boardShader, boardModel);
-    WhiteKing whiteKing(boardShader, whiteKingModel);
-    Knight knight(boardShader, knightModel);
+    // TODO: IluminatedObjects should be in vector
+    // TODO: Objects should have some reset function to move them to 0.0 point
+    Board board(objectShader, boardModel);
+    WhiteKing whiteKing(objectShader, whiteKingModel);
+    Knight knight(objectShader, knightModel);
+    Sphere sphere(sphereShader, sphereModel);
 
     LightProperty lightProperty;
     configureLightProperty(lightProperty);
@@ -124,12 +137,12 @@ void Scene::run()
         lastFrame = currentFrame;
 
         processInput(window, conditionsController);
-        std::cout << camera.Position.x <<
-            " " << camera.Position.y << 
-            " "<<camera.Position.z << endl;
+        //std::cout << camera.Position.x <<
+        //    " " << camera.Position.y << 
+        //    " "<<camera.Position.z << endl;
 
-        std::cout << "Pitch: " << camera.Pitch << endl;
-        std::cout << "Yaw: " << camera.Yaw<< endl;
+        //std::cout << "Pitch: " << camera.Pitch << endl;
+        //std::cout << "Yaw: " << camera.Yaw<< endl;
         conditionsController.updateTime();
         lightProperty.updateLight(conditionsController);
 
@@ -153,7 +166,7 @@ void Scene::run()
         whiteKing.draw(lightProperty, camera, conditionsController);
         whiteKing.move(deltaTime);
         knight.draw(lightProperty, camera, conditionsController);
-
+        sphere.draw(lightProperty, camera, conditionsController);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -245,10 +258,17 @@ void Scene::processInput(GLFWwindow* window, ConditionsController &controller)
         wasPressed = true;
     }
 
+    if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS && !wasPressed)
+    {
+        controller.lightsOn = !controller.lightsOn;
+        wasPressed = true;
+    }
+
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_RELEASE &&
         glfwGetKey(window, GLFW_KEY_2) == GLFW_RELEASE &&
-        glfwGetKey(window, GLFW_KEY_3) == GLFW_RELEASE)
-        wasPressed = false;
+        glfwGetKey(window, GLFW_KEY_3) == GLFW_RELEASE &&
+        glfwGetKey(window, GLFW_KEY_4) == GLFW_RELEASE)
+            wasPressed = false;
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(FORWARD, deltaTime);
