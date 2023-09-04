@@ -31,6 +31,13 @@ struct LightProperty
     DirLight dirLight;
     std::vector<PointLight> pointLights;
     std::vector<SpotLight> spotLights;
+
+    void updateLight(const ConditionsController& controller)
+    {
+        dirLight.ambient = controller.getAmbient();
+        dirLight.diffuse = controller.getDiffuse();
+        dirLight.specular = controller.getSpecular();
+    }
 };
 
 class IluminatedObject

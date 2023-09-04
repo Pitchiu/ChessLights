@@ -7,10 +7,10 @@ IluminatedObject::IluminatedObject(Shader& shader, Model& model) : shader(shader
 
 void IluminatedObject::configureIlumination(const LightProperty& prop)
 {
-    shader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-    shader.setVec3("dirLight.ambient", 0.2f, 0.2f, 0.2f);
-    shader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-    shader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+    shader.setVec3("dirLight.direction", prop.dirLight.direction);
+    shader.setVec3("dirLight.ambient", prop.dirLight.ambient);
+    shader.setVec3("dirLight.diffuse", prop.dirLight.diffuse);
+    shader.setVec3("dirLight.specular", prop.dirLight.specular);
     // TODO: set attributes in loop
     // pointLight
     shader.setVec3("pointLights[0].position", -10.0f, -10.0f, 10.0f); //changed

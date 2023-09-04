@@ -72,17 +72,6 @@ Scene* Scene::getInstance()
     return mScene;
 }
 
-//void calculatePitchYaw(const glm::vec3& cameraPos, const glm::vec3& objectPos, float& pitch, float& yaw) {
-//    // Calculate the direction vector from the camera to the object
-//    glm::vec3 direction = glm::normalize(objectPos - cameraPos);
-//
-//    // Calculate pitch (up/down rotation)
-//    pitch = glm::degrees(asin(direction.y));
-//
-//    // Calculate yaw (left/right rotation)
-//    yaw = glm::degrees(atan2(-direction.x, -direction.z));
-//}
-
 void calculatePitchYaw(const glm::vec3& cameraPos, const glm::vec3& objectPos, const glm::vec3& up, float& pitch, float& yaw) {
     glm::vec3 direction = glm::normalize(objectPos - cameraPos);
 
@@ -92,6 +81,14 @@ void calculatePitchYaw(const glm::vec3& cameraPos, const glm::vec3& objectPos, c
     // Calculate pitch (up/down rotation)
     glm::vec3 right = glm::normalize(glm::cross(up, direction));
     pitch = glm::degrees(atan2(-direction.y, glm::length(right)));
+}
+
+void Scene::configureLightProperty(LightProperty& prop)
+{
+    prop.dirLight.direction = { -0.2f, -1.0f, -0.3f };
+    prop.dirLight.ambient = { 0.5f, 0.5f, 0.5f };
+    prop.dirLight.diffuse = { 0.4f, 0.4f, 0.4f };
+    prop.dirLight.specular = { 0.5f, 0.5f, 0.5f };
 }
 
 
@@ -114,6 +111,8 @@ void Scene::run()
     Knight knight(boardShader, knightModel);
 
     LightProperty lightProperty;
+    configureLightProperty(lightProperty);
+
     ConditionsController conditionsController;
 
     camera.SetNewPosition(staticCameraPos, staticCameraPitch, staticCameraYaw);
@@ -132,6 +131,8 @@ void Scene::run()
         std::cout << "Pitch: " << camera.Pitch << endl;
         std::cout << "Yaw: " << camera.Yaw<< endl;
         conditionsController.updateTime();
+        lightProperty.updateLight(conditionsController);
+
         auto background = conditionsController.getBackgroundColor();
         glClearColor(background.r, background.g, background.b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

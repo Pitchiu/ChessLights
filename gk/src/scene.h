@@ -40,6 +40,7 @@ private:
 	void processInput(GLFWwindow* window, ConditionsController& controller);
 	void mouseCallback(GLFWwindow* window, double xposIn, double yposIn);
 	void changeCamera();
+	void configureLightProperty(LightProperty& lightProperty);
 
 	bool wasPressed = false;
 
@@ -62,6 +63,7 @@ public:
 	float lastFrame = 0.0f;
 	float lastX = SCR_WIDTH / 2.0f;
 	float lastY = SCR_HEIGHT / 2.0f;
+
 
 	void run();
 

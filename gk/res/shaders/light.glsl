@@ -61,11 +61,11 @@ vec3 calcColorWithLight(vec3 FragPos, vec3 Normal, vec3 viewPos)
     vec3 viewDir = normalize(viewPos - FragPos);
     vec3 result = calcDirLight(dirLight, norm, viewDir);
     // phase 2: point lights
-    for(int i = 0; i < NR_POINT_LIGHTS; i++)
-        result += calcPointLight(pointLights[i], norm, FragPos, viewDir);    
+    //for(int i = 0; i < NR_POINT_LIGHTS; i++)
+    //    result += calcPointLight(pointLights[i], norm, FragPos, viewDir);    
     // phase 3: spot light
-    for(int i = 0; i < NR_SPOT_LIGHTS; i++)
-        result += calcSpotLight(spotLight[i], norm, FragPos, viewDir);
+    //for(int i = 0; i < NR_SPOT_LIGHTS; i++)
+    //    result += calcSpotLight(spotLight[i], norm, FragPos, viewDir);
     return result;
 }
 
