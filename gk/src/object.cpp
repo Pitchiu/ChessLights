@@ -24,17 +24,32 @@ void IluminatedObject::configureIlumination(const LightProperty& prop)
         shader.setFloat("pointLights[" + to_string(i) + "].quadratic", prop.pointLights[i].quadratic);
     }
 
-    // spotLight
-    shader.setVec3("spotLight[0].position", 5.0f, 5.0f, 5.0f); //changed
-    shader.setVec3("spotLight[0].direction", -0.5f, -0.5f, -0.5f); //changed
-    shader.setVec3("spotLight[0].ambient", 0.0f, 0.0f, 0.0f);
-    shader.setVec3("spotLight[0].diffuse", 1.0f, 1.0f, 1.0f);
-    shader.setVec3("spotLight[0].specular", 1.0f, 1.0f, 1.0f);
-    shader.setFloat("spotLight[0].constant", 1.0f);
-    shader.setFloat("spotLight[0].linear", 0.09f);
-    shader.setFloat("spotLight[0].quadratic", 0.032f);
-    shader.setFloat("spotLight[0].cutOff", glm::cos(glm::radians(12.5f)));
-    shader.setFloat("spotLight[0].outerCutOff", glm::cos(glm::radians(15.0f)));
+    //SpotLight s1;
+    //s1.position = spotLight;
+    //s1.direction = { -0.8f, -0.8f, -0.8f };
+    //s1.ambient = { 0.1f, 0.1f, 0.1f };
+    //s1.diffuse = { 1.0f, 1.0f, 1.0f };
+    //s1.specular = { 1.0f, 1.0f, 1.0f };
+    //s1.constant = 0.1f;
+    //s1.linear = 0.01f;
+    //s1.quadratic = 0.001f;
+    //s1.cutOff = glm::radians(30.0f);
+    //s1.outerCutOff = glm::radians(45.0f);
+    //prop.pointLights.push_back(p2);
+
+    for (int i = 0; i < prop.spotLights.size(); i++)
+    {
+        shader.setVec3("spotLights[" + to_string(i) + "].position", prop.spotLights[i].position);
+        shader.setVec3("spotLights[" + to_string(i) + "].direction", prop.spotLights[i].direction);
+        shader.setVec3("spotLights[" + to_string(i) + "].ambient", prop.spotLights[i].ambient);
+        shader.setVec3("spotLights[" + to_string(i) + "].diffuse", prop.spotLights[i].diffuse);
+        shader.setVec3("spotLights[" + to_string(i) + "].specular", prop.spotLights[i].specular);
+        shader.setFloat("spotLights[" + to_string(i) + "].constant", prop.spotLights[i].constant);
+        shader.setFloat("spotLights[" + to_string(i) + "].linear", prop.spotLights[i].linear);
+        shader.setFloat("spotLights[" + to_string(i) + "].quadratic", prop.spotLights[i].quadratic);
+        shader.setFloat("spotLights[" + to_string(i) + "].cutOff", prop.spotLights[i].cutOff);
+        shader.setFloat("spotLights[" + to_string(i) + "].outerCutOff", prop.spotLights[i].outerCutOff);
+    }
 }
 
 void IluminatedObject::draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController)
@@ -169,7 +184,7 @@ void Knight::draw(const LightProperty& prop, const Camera& camera, const Conditi
     IluminatedObject::draw(prop, camera, conditionsController);
 }
 
-Sphere::Sphere(Shader& shader, Model& model) : IluminatedObject(shader, model)
+Sphere::Sphere(Shader& shader, Model& model, glm::vec3 position) : IluminatedObject(shader, model), position(position)
 {
 }
 
@@ -177,7 +192,7 @@ void Sphere::draw(const LightProperty& prop, const Camera& camera, const Conditi
 {
     shader.use();
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, spherePosition1);
+    model = glm::translate(model, position);
     model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
 
     shader.setMat4("model", model);

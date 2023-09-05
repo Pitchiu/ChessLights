@@ -24,6 +24,9 @@ const float trackingCameraExtraYaw = 30.0f;
 const glm::vec3 POVCameraPos = glm::vec3(0.75f, 6.01f, 7.87f);
 
 const glm::vec3 spherePosition1 = glm::vec3(7.0f, 3.0f, 7.0f);
+const glm::vec3 spherePosition2 = glm::vec3(-6.0f, 2.0f, 0.0f);
+
+const glm::vec3 spotLightPosition1 = glm::vec3(0.75f, 6.01f, 7.87f);
 
 
 class Scene
@@ -38,7 +41,7 @@ private:
 
 	void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 	void framebufferSizeCallback(GLFWwindow* window, int width, int height);
-	void processInput(GLFWwindow* window, ConditionsController& controller);
+	void processInput(GLFWwindow* window, ConditionsController& controller, LightProperty& lightProperty);
 	void mouseCallback(GLFWwindow* window, double xposIn, double yposIn);
 	void changeCamera();
 	void configureLightProperty(LightProperty& lightProperty);

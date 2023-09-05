@@ -5,6 +5,12 @@
 #include "camera.h"
 #include "weather.h"
 
+enum Light_Movement {
+    U,
+    D,
+    L,
+    R
+};
 
 struct DirLight
 {
@@ -24,6 +30,9 @@ struct SpotLight : PointLight
 {
     float cutOff = glm::cos(glm::radians(12.5f));
     float outerCutOff = glm::cos(glm::radians(15.0f));
+    glm::vec3 initialPosition = { -10.0f, -10.0f, 10.0f };
+    float yaw = -45.0f;
+    float pitch = -45.0f;
 };
 
 struct LightProperty
@@ -32,11 +41,46 @@ struct LightProperty
     std::vector<PointLight> pointLights;
     std::vector<SpotLight> spotLights;
 
-    void updateLight(const ConditionsController& controller)
+    const float lightSpeed = 50.0f;
+
+    void updateLight(const ConditionsController& controller, float offset)
     {
         dirLight.ambient = controller.getAmbient();
         dirLight.diffuse = controller.getDiffuse();
         dirLight.specular = controller.getSpecular();
+
+        for (int i = 0; i < spotLights.size(); i++)
+            spotLights[i].position = spotLights[i].initialPosition - glm::vec3(0.0f, 0.0f, offset);
+    }
+    void processMovement(Light_Movement dir, float deltaTime)
+    {
+        for (int i = 0; i < spotLights.size(); i++)
+        {
+             if(dir == U)
+                spotLights[i].pitch += deltaTime * lightSpeed;
+            else if (dir == D)
+                spotLights[i].pitch -= deltaTime * lightSpeed;
+            else if (dir == R)
+                spotLights[i].yaw += deltaTime * lightSpeed;
+            else if (dir == L)
+                spotLights[i].yaw -= deltaTime * lightSpeed;
+
+            float pitch = spotLights[i].pitch;
+            float yaw = spotLights[i].yaw;
+
+
+            if (spotLights[i].pitch > 89.0f)
+                spotLights[i].pitch = 89.0f;
+            if (spotLights[i].pitch < -89.0f)
+                spotLights[i].pitch = -89.0f;
+
+            glm::vec3 newDir;
+            newDir.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+            newDir.y = sin(glm::radians(pitch));
+            newDir.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+            newDir = glm::normalize(newDir);
+            spotLights[i].direction = newDir;
+        }
     }
 };
 
@@ -92,7 +136,9 @@ public:
 
 class Sphere : IluminatedObject
 {
+private:
+    glm::vec3 position;
 public:
-    Sphere(Shader& shader, Model& model);
+    Sphere(Shader& shader, Model& model, glm::vec3 position);
     void draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController) override;
 };

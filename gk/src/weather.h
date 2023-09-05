@@ -26,13 +26,6 @@ private:
 		return elapsed_milliseconds.count();
 	}
 
-	//const glm::vec4 backgroundColors[4] = {
-	//	{0.94f, 0.97f, 0.96f, 1.0f},
-	//	{0.52f, 0.81f, 0.92f, 1.0f},
-	//	{0.99f, 0.38f, 0.32f, 1.0f},
-	//	{0.05f, 0.08f, 0.27f, 1.0f}
-	//};
-
 	const glm::vec3 backgroundColors[4] = {
 	{0.6f, 0.8f, 1.0f},
 	{0.53f, 0.81f, 0.98f},
@@ -70,6 +63,8 @@ private:
 	const float fogMax = 0.1f;
 	std::chrono::steady_clock::time_point fogChangeStart;
 
+	std::chrono::steady_clock::time_point last_time = std::chrono::steady_clock::now();
+
 	float currentFogValue = 0.0f;
 	float startChanging = 0.0f;
 	bool fogEnabled = false;
@@ -99,11 +94,12 @@ public:
 
 	void updateTime()
 	{
+		if (timeStop) start_time += std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - last_time);
 		int secondsInCycle = (elapsedMiliSeconds(start_time) % fullCycleSeconds);
 		timeOfDay = (TimeOfDay)(secondsInCycle / partialCycleSeconds);
 		mixFactor = (float)(secondsInCycle - timeOfDay * partialCycleSeconds)/(float)partialCycleSeconds;
 		updateFog();
-
+		last_time = std::chrono::steady_clock::now();
 	}
 
 	glm::vec3 getAmbient() const
@@ -148,4 +144,5 @@ public:
 
 	bool objectShaking = false;
 	bool lightsOn = false;
+	bool timeStop = false;
 };

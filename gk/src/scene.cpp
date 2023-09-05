@@ -90,15 +90,42 @@ void Scene::configureLightProperty(LightProperty& prop)
     prop.dirLight.diffuse = { 0.4f, 0.4f, 0.4f };
     prop.dirLight.specular = { 0.5f, 0.5f, 0.5f };
 
-    PointLight p;
-    p.position = spherePosition1;
-    p.ambient = { 0.1f, 0.1f, 0.1f };
-    p.diffuse = { 1.0f, 1.0f, 0.9f };
-    p.specular = { 0.1f, 0.1f, 0.1f };
-    p.constant = 1.0f;
-    p.linear = 0.09f;
-    p.quadratic = 0.032f;
-    prop.pointLights.push_back(p);
+    PointLight p1;
+    p1.position = spherePosition1;
+    p1.ambient = { 0.1f, 0.1f, 0.1f };
+    p1.diffuse = { 1.0f, 1.0f, 0.9f };
+    p1.specular = { 0.1f, 0.1f, 0.1f };
+    p1.constant = 1.0f;
+    p1.linear = 0.09f;
+    p1.quadratic = 0.032f;
+    prop.pointLights.push_back(p1);
+
+    PointLight p2;
+    p2.position = spherePosition2;
+    p2.ambient = { 0.1f, 0.1f, 0.1f };
+    p2.diffuse = { 1.0f, 1.0f, 0.9f };
+    p2.specular = { 0.1f, 0.1f, 0.1f };
+    p2.constant = 1.0f;
+    p2.linear = 0.09f;
+    p2.quadratic = 0.032f;
+    prop.pointLights.push_back(p2);
+
+    SpotLight s1;
+    s1.position = spotLightPosition1;
+    s1.initialPosition = spotLightPosition1;
+    s1.pitch = -45.0f;
+    s1.yaw = -45.0f;
+    s1.ambient = { 0.1f, 0.1f, 0.1f };
+    s1.diffuse = { 1.0f, 1.0f, 1.0f };
+    s1.specular = { 1.0f, 1.0f, 1.0f };
+    s1.constant = 0.1f;
+    s1.linear = 0.01f;
+    s1.quadratic = 0.001f;
+    s1.cutOff = glm::cos(glm::radians(10.0f));
+    s1.outerCutOff = glm::cos(glm::radians(20.0f));
+    prop.spotLights.push_back(s1);
+    // Instead of setting direction, calculate it with pitch and yaw.
+    prop.processMovement(U, 0);
 }
 
 
@@ -121,7 +148,9 @@ void Scene::run()
     Board board(objectShader, boardModel);
     WhiteKing whiteKing(objectShader, whiteKingModel);
     Knight knight(objectShader, knightModel);
-    Sphere sphere(sphereShader, sphereModel);
+    Sphere sphere1(sphereShader, sphereModel, spherePosition1);
+    Sphere sphere2(sphereShader, sphereModel, spherePosition2);
+
 
     LightProperty lightProperty;
     configureLightProperty(lightProperty);
@@ -136,7 +165,7 @@ void Scene::run()
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        processInput(window, conditionsController);
+        processInput(window, conditionsController, lightProperty);
         //std::cout << camera.Position.x <<
         //    " " << camera.Position.y << 
         //    " "<<camera.Position.z << endl;
@@ -144,7 +173,7 @@ void Scene::run()
         //std::cout << "Pitch: " << camera.Pitch << endl;
         //std::cout << "Yaw: " << camera.Yaw<< endl;
         conditionsController.updateTime();
-        lightProperty.updateLight(conditionsController);
+        lightProperty.updateLight(conditionsController, whiteKing.getOffset());
 
         auto background = conditionsController.getBackgroundColor();
         glClearColor(background.r, background.g, background.b, 1.0f);
@@ -166,7 +195,8 @@ void Scene::run()
         whiteKing.draw(lightProperty, camera, conditionsController);
         whiteKing.move(deltaTime);
         knight.draw(lightProperty, camera, conditionsController);
-        sphere.draw(lightProperty, camera, conditionsController);
+        sphere1.draw(lightProperty, camera, conditionsController);
+        sphere2.draw(lightProperty, camera, conditionsController);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -235,10 +265,16 @@ void Scene::changeCamera()
     }
 }
 
-void Scene::processInput(GLFWwindow* window, ConditionsController &controller)
+void Scene::processInput(GLFWwindow* window, ConditionsController &controller, LightProperty &lightProperty)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+    // 1 - fog
+    // 2 - camera
+    // 3 - shaking
+    // 4 - lights
+    // 5 - time
 
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && !wasPressed)
     {
@@ -264,10 +300,17 @@ void Scene::processInput(GLFWwindow* window, ConditionsController &controller)
         wasPressed = true;
     }
 
+    if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS && !wasPressed)
+    {
+        controller.timeStop = !controller.timeStop;
+        wasPressed = true;
+    }
+
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_RELEASE &&
         glfwGetKey(window, GLFW_KEY_2) == GLFW_RELEASE &&
         glfwGetKey(window, GLFW_KEY_3) == GLFW_RELEASE &&
-        glfwGetKey(window, GLFW_KEY_4) == GLFW_RELEASE)
+        glfwGetKey(window, GLFW_KEY_4) == GLFW_RELEASE &&
+        glfwGetKey(window, GLFW_KEY_5) == GLFW_RELEASE)
             wasPressed = false;
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -278,4 +321,13 @@ void Scene::processInput(GLFWwindow* window, ConditionsController &controller)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+        lightProperty.processMovement(U, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        lightProperty.processMovement(L, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        lightProperty.processMovement(R, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        lightProperty.processMovement(D, deltaTime);
 }

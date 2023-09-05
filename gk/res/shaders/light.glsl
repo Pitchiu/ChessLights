@@ -1,4 +1,4 @@
-#define NR_POINT_LIGHTS 1
+#define NR_POINT_LIGHTS 2
 #define NR_SPOT_LIGHTS 1
 
 struct Material {
@@ -43,7 +43,7 @@ struct SpotLight {
 
 uniform DirLight dirLight;
 uniform PointLight pointLights[NR_POINT_LIGHTS];
-uniform SpotLight spotLight[NR_SPOT_LIGHTS];
+uniform SpotLight spotLights[NR_SPOT_LIGHTS];
 uniform Material material;
 uniform sampler2D texture_diffuse1;
 uniform bool lightsOn;
@@ -67,8 +67,8 @@ vec3 calcColorWithLight(vec3 FragPos, vec3 Normal, vec3 viewPos)
     for(int i = 0; i < NR_POINT_LIGHTS; i++)
         result += calcPointLight(pointLights[i], norm, FragPos, viewDir);    
     // phase 3: spot light
-    //for(int i = 0; i < NR_SPOT_LIGHTS; i++)
-    //    result += calcSpotLight(spotLight[i], norm, FragPos, viewDir);
+    for(int i = 0; i < NR_SPOT_LIGHTS; i++)
+        result += calcSpotLight(spotLights[i], norm, FragPos, viewDir);
     return result;
 }
 
