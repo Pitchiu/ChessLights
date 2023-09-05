@@ -7,7 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "camera.h"
 #include "weather.h"
-#include "shader_m.h"
+#include "shader.h"
 #include "model.h"
 #include "object.h"
 

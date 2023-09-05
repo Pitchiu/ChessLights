@@ -69,6 +69,14 @@ ScaffoldingReadMe.txt
 # StyleCop
 StyleCopReport.xml
 
+# exclude these files
+!board.obj
+!king.obj
+!knight.obj
+!pawn.obj
+!rook.obj
+!sphere.obj
+
 # Files built by Visual Studio
 *_i.c
 *_p.c

@@ -33,7 +33,6 @@ void scrollCallbackHandle(GLFWwindow* window, double xoffset, double yoffset)
 
 Scene::Scene()
 {
-    // Scene setup
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -43,8 +42,6 @@ Scene::Scene()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    // glfw window creation
-    // --------------------
     window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "ChessLights", NULL, NULL);
     if (window == NULL)
     {
@@ -61,7 +58,6 @@ Scene::Scene()
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glewInit();
 
-    //stbi_set_flip_vertically_on_load(true);
     glEnable(GL_DEPTH_TEST);
 }
 
@@ -75,10 +71,8 @@ Scene* Scene::getInstance()
 void calculatePitchYaw(const glm::vec3& cameraPos, const glm::vec3& objectPos, const glm::vec3& up, float& pitch, float& yaw) {
     glm::vec3 direction = glm::normalize(objectPos - cameraPos);
 
-    // Calculate yaw (left/right rotation)
     yaw = glm::degrees(atan2(direction.x, direction.z));
 
-    // Calculate pitch (up/down rotation)
     glm::vec3 right = glm::normalize(glm::cross(up, direction));
     pitch = glm::degrees(atan2(-direction.y, glm::length(right)));
 }
@@ -161,7 +155,7 @@ void Scene::run()
 
     ConditionsController conditionsController;
 
-    camera.SetNewPosition(staticCameraPos, staticCameraPitch, staticCameraYaw);
+    camera.setNewPosition(staticCameraPos, staticCameraPitch, staticCameraYaw);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -170,12 +164,6 @@ void Scene::run()
         lastFrame = currentFrame;
 
         processInput(window, conditionsController, lightProperty);
-        //std::cout << camera.Position.x <<
-        //    " " << camera.Position.y << 
-        //    " "<<camera.Position.z << endl;
-
-        //std::cout << "Pitch: " << camera.Pitch << endl;
-        //std::cout << "Yaw: " << camera.Yaw<< endl;
         conditionsController.updateTime();
         lightProperty.updateLight(conditionsController, whiteKing.getOffset());
 
@@ -185,14 +173,14 @@ void Scene::run()
 
         if (cameraMode == Tracking)
         {
-            camera.SetNewPosition(trackingCameraPos,
+            camera.setNewPosition(trackingCameraPos,
                 trackingCameraBasePitch + whiteKing.getPosition() * trackingCameraExtraPitch,
                 trackingCameraBaseYaw + whiteKing.getPosition() * trackingCameraExtraYaw);
         }
 
         if (cameraMode == POV)
         {
-            camera.SetNewPosition(POVCameraPos - glm::vec3(0.0f, 0.0f, whiteKing.getOffset()), camera.Pitch, camera.Yaw);
+            camera.setNewPosition(POVCameraPos - glm::vec3(0.0f, 0.0f, whiteKing.getOffset()), camera.Pitch, camera.Yaw);
         }
 
         board.draw(lightProperty, camera, conditionsController);
@@ -218,13 +206,11 @@ Scene::~Scene()
 
 void Scene::scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    camera.ProcessMouseScroll(static_cast<float>(yoffset));
+    camera.processMouseScroll(static_cast<float>(yoffset));
 }
 
 void Scene::framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-    // make sure the viewport matches the new window dimensions; note that width and 
-    // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
 
@@ -246,7 +232,7 @@ void Scene::mouseCallback(GLFWwindow* window, double xposIn, double yposIn)
     lastX = xpos;
     lastY = ypos;
 
-    camera.ProcessMouseMovement(xoffset, yoffset);
+    camera.processMouseMovement(xoffset, yoffset);
 }
 
 void Scene::changeCamera()
@@ -268,7 +254,7 @@ void Scene::changeCamera()
 
     if (cameraMode == Static)
     {
-        camera.SetNewPosition(staticCameraPos, staticCameraPitch, staticCameraYaw);
+        camera.setNewPosition(staticCameraPos, staticCameraPitch, staticCameraYaw);
     }
 }
 
@@ -282,6 +268,7 @@ void Scene::processInput(GLFWwindow* window, ConditionsController &controller, L
     // 3 - shaking
     // 4 - lights
     // 5 - time
+    // 6 - shading mode
 
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && !wasPressed)
     {
@@ -328,13 +315,13 @@ void Scene::processInput(GLFWwindow* window, ConditionsController &controller, L
             wasPressed = false;
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(FORWARD, deltaTime);
+        camera.processKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
+        camera.processKeyboard(BACKWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
+        camera.processKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
+        camera.processKeyboard(RIGHT, deltaTime);
 
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
         lightProperty.processMovement(U, deltaTime);

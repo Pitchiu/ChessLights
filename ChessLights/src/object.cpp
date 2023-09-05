@@ -6,6 +6,7 @@ IluminatedObject::IluminatedObject(Shader& shader, Model& model) : shader(shader
 {
 }
 
+
 void IluminatedObject::configureIlumination(const LightProperty& prop)
 {
     shader.setVec3("dirLight.direction", prop.dirLight.direction);
@@ -23,19 +24,6 @@ void IluminatedObject::configureIlumination(const LightProperty& prop)
         shader.setFloat("pointLights[" + to_string(i) + "].linear", prop.pointLights[i].linear);
         shader.setFloat("pointLights[" + to_string(i) + "].quadratic", prop.pointLights[i].quadratic);
     }
-
-    //SpotLight s1;
-    //s1.position = spotLight;
-    //s1.direction = { -0.8f, -0.8f, -0.8f };
-    //s1.ambient = { 0.1f, 0.1f, 0.1f };
-    //s1.diffuse = { 1.0f, 1.0f, 1.0f };
-    //s1.specular = { 1.0f, 1.0f, 1.0f };
-    //s1.constant = 0.1f;
-    //s1.linear = 0.01f;
-    //s1.quadratic = 0.001f;
-    //s1.cutOff = glm::radians(30.0f);
-    //s1.outerCutOff = glm::radians(45.0f);
-    //prop.pointLights.push_back(p2);
 
     for (int i = 0; i < prop.spotLights.size(); i++)
     {
@@ -56,11 +44,10 @@ void IluminatedObject::draw(const LightProperty& prop, const Camera& camera, con
 {
     shader.use();
     configureIlumination(prop);
-    shader.setMat4("projection", camera.GetProjectionMatrix());
-    shader.setMat4("view", camera.GetViewMatrix());
+    shader.setMat4("projection", camera.getProjectionMatrix());
+    shader.setMat4("view", camera.getViewMatrix());
     shader.setVec3("viewPos", camera.Position);
 
-    // fog
     shader.setVec3("skyColor", conditionsController.getBackgroundColor());
     shader.setFloat("fogDensity", conditionsController.getFogDensity());
     shader.setBool("lightsOn", conditionsController.lightsOn);

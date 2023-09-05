@@ -1,6 +1,6 @@
 #pragma once
 
-#include "shader_m.h"
+#include "shader.h"
 #include "model.h"
 #include "camera.h"
 #include "weather.h"
