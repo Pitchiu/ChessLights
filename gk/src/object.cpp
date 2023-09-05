@@ -203,3 +203,43 @@ void Sphere::draw(const LightProperty& prop, const Camera& camera, const Conditi
 
     IluminatedObject::draw(prop, camera, conditionsController);
 }
+
+Pawn::Pawn(Shader& shader, Model& model) : IluminatedObject(shader, model)
+{
+
+}
+
+void Pawn::draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController)
+{
+    shader.use();
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+    model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+    model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    shader.setMat4("model", model);
+
+    shader.setVec3("material.specular", 0.54f, 0.54f, 0.54f);
+    shader.setFloat("material.shininess", 36.0f);
+
+    IluminatedObject::draw(prop, camera, conditionsController);
+}
+
+Rook::Rook(Shader& shader, Model& model) : IluminatedObject(shader, model)
+{
+
+}
+
+void Rook::draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController)
+{
+    shader.use();
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(-10.0f, 0.0f, 5.0f));
+    model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+    model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    shader.setMat4("model", model);
+
+    shader.setVec3("material.specular", 0.54f, 0.54f, 0.54f);
+    shader.setFloat("material.shininess", 36.0f);
+
+    IluminatedObject::draw(prop, camera, conditionsController);
+}

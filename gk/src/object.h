@@ -134,6 +134,20 @@ public:
     void draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController) override;
 };
 
+class Pawn : IluminatedObject
+{
+public:
+    Pawn(Shader& shader, Model& model);
+    void draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController) override;
+};
+
+class Rook : IluminatedObject
+{
+public:
+    Rook(Shader& shader, Model& model);
+    void draw(const LightProperty& prop, const Camera& camera, const ConditionsController& conditionsController) override;
+};
+
 class Sphere : IluminatedObject
 {
 private:

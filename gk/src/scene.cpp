@@ -140,6 +140,8 @@ void Scene::run()
     Model boardModel("res/board/board.obj");
     Model whiteKingModel("res/king/king.obj");
     Model knightModel("res/knight/knight.obj");
+    Model pawnModel("res/pawn/pawn.obj");
+    Model rookModel("res/rook/rook.obj");
     Model sphereModel("res/sphere/sphere.obj");
 
 
@@ -148,6 +150,9 @@ void Scene::run()
     Board board(objectShader, boardModel);
     WhiteKing whiteKing(objectShader, whiteKingModel);
     Knight knight(objectShader, knightModel);
+    Pawn pawn(objectShader, pawnModel);
+    Rook rook(objectShader, rookModel);
+
     Sphere sphere1(sphereShader, sphereModel, spherePosition1);
     Sphere sphere2(sphereShader, sphereModel, spherePosition2);
 
@@ -194,6 +199,9 @@ void Scene::run()
         whiteKing.draw(lightProperty, camera, conditionsController);
         whiteKing.move(deltaTime);
         knight.draw(lightProperty, camera, conditionsController);
+        pawn.draw(lightProperty, camera, conditionsController);
+        rook.draw(lightProperty, camera, conditionsController);
+
         sphere1.draw(lightProperty, camera, conditionsController);
         sphere2.draw(lightProperty, camera, conditionsController);
 
