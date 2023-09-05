@@ -65,6 +65,8 @@ void IluminatedObject::draw(const LightProperty& prop, const Camera& camera, con
     shader.setFloat("fogDensity", conditionsController.getFogDensity());
     shader.setBool("lightsOn", conditionsController.lightsOn);
 
+    shader.setInt("shadeMode", conditionsController.shadeMode);
+
     model.Draw(shader);
 }
 

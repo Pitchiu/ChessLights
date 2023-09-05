@@ -151,7 +151,6 @@ void Scene::run()
     Sphere sphere1(sphereShader, sphereModel, spherePosition1);
     Sphere sphere2(sphereShader, sphereModel, spherePosition2);
 
-
     LightProperty lightProperty;
     configureLightProperty(lightProperty);
 
@@ -306,11 +305,18 @@ void Scene::processInput(GLFWwindow* window, ConditionsController &controller, L
         wasPressed = true;
     }
 
+    if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS && !wasPressed)
+    {
+        controller.shadeMode = (controller.shadeMode == 2 ? 0 : controller.shadeMode + 1);
+        wasPressed = true;
+    }
+
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_RELEASE &&
         glfwGetKey(window, GLFW_KEY_2) == GLFW_RELEASE &&
         glfwGetKey(window, GLFW_KEY_3) == GLFW_RELEASE &&
         glfwGetKey(window, GLFW_KEY_4) == GLFW_RELEASE &&
-        glfwGetKey(window, GLFW_KEY_5) == GLFW_RELEASE)
+        glfwGetKey(window, GLFW_KEY_5) == GLFW_RELEASE &&
+        glfwGetKey(window, GLFW_KEY_6) == GLFW_RELEASE)
             wasPressed = false;
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)

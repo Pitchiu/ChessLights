@@ -145,4 +145,5 @@ public:
 	bool objectShaking = false;
 	bool lightsOn = false;
 	bool timeStop = false;
+	int shadeMode = 0;
 };
